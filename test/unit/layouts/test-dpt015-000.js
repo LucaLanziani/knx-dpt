@@ -1,7 +1,7 @@
 const test = require('tape');
 const DPTLib = require('../../../src');
 
-var dpt = DPTLib.resolve('DPT15');
+var dpt = DPTLib.resolve('DPT15.000');
 
 var tests = [
     [[0x19, 0x86, 0x15, 0x20], {encryption: 0, readDirection: 1, permission: 0, error: 0, digit1:5 , digit2:1 , digit3:6 , digit4:8 , digit5:9 ,digit6: 1}],
@@ -10,7 +10,7 @@ var tests = [
     [[0x47, 0x61, 0x55, 0xC0], {encryption: 0, readDirection: 0, permission: 1, error: 1, digit1:5 , digit2:5 , digit3:1 , digit4:6 , digit5:7 ,digit6: 4}]
 ];
 
-test('DPT15 conversion', function (t) {
+test('DPT15.000', function (t) {
     t.plan(tests.length * 2);
     for (var i = 0; i < tests.length; i++) {
         var buf = new Buffer(tests[i][0]);
@@ -18,11 +18,11 @@ test('DPT15 conversion', function (t) {
 
         // backward test (object to raw data)
         converted = dpt.formatAPDU(obj);
-        t.deepEqual(converted, buf, `DPT15 formatAPDU ${JSON.stringify(obj)}`);
+        t.deepEqual(converted, buf, `DPT15.000 formatAPDU ${JSON.stringify(obj)}`);
 
         // forward test (raw data to object)
         var converted = dpt.fromBuffer(buf);
-        t.deepEqual(converted, obj, `DPT15 fromBuffer ${JSON.stringify(buf)}`);
+        t.deepEqual(converted, obj, `DPT15.000 fromBuffer ${JSON.stringify(buf)}`);
     }
     t.end();
 });

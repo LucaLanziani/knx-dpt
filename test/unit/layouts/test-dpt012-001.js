@@ -1,7 +1,7 @@
 const test = require('tape');
 const DPTLib = require('../../../src');
 
-var dpt = DPTLib.resolve('DPT12');
+var dpt = DPTLib.resolve('DPT12.001');
 
 var tests = [
     // MSB LSB
@@ -23,7 +23,7 @@ var tests = [
     [[0x01,0x01,0x01,0x01],16843009],
 ];
 
-test('DPT12 conversion', function (t) {
+test('DPT12.001', function (t) {
     t.plan(tests.length * 2);
     for (var i = 0; i < tests.length; i++) {
         var buf = new Buffer(tests[i][0]);
@@ -31,11 +31,11 @@ test('DPT12 conversion', function (t) {
 
         // backward test (object to raw data)
         var converted = dpt.formatAPDU(obj);
-        t.deepEqual(converted, buf, `DPT12 formatAPDU ${JSON.stringify(obj)}`);
+        t.deepEqual(converted, buf, `DPT12.001 formatAPDU ${JSON.stringify(obj)}`);
 
         // forward test (raw data to object)
         converted = dpt.fromBuffer(Buffer.from(buf));
-        t.equal(converted, obj, `DPT12 fromBuffer ${JSON.stringify(buf)}`);
+        t.equal(converted, obj, `DPT12.001 fromBuffer ${JSON.stringify(buf)}`);
     }
     t.end();
 });

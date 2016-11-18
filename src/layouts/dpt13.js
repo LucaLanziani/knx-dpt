@@ -15,6 +15,15 @@ module.exports = {
             "unit": "pulses"
         },
 
+        // 13.002
+        "002": {
+            "name": "DPT_FlowRate_m3/h",
+            "desc": "flow rate (m3/h)",
+            "unit": "m3/h",
+            beforeSerialize: function(d) { return d * 10000; },
+            afterDeserialize: function(d) { return d / 10000; }
+        },
+
         // 13.010 active energy (Wh)
         "010": {
             "name": "DPT_ActiveEnergy",

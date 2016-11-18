@@ -24,14 +24,14 @@ module.exports = {
 
         // 7.003 time (10ms)
         "003" : { "use" : "G",
-            "name" : "DPT_TimePeriod10Msec",
+            "name" : "DPT_TimePeriod10MSec",
             "desc" : "time (10ms)",
             "unit" : "centiseconds"
         },
 
         // 7.004 time (100ms)
         "004" : { "use" : "G",
-            "name" : "DPT_TimePeriod100Msec",
+            "name" : "DPT_TimePeriod100MSec",
             "desc" : "time (100ms)",
             "unit" : "deciseconds"
         },
@@ -73,7 +73,7 @@ module.exports = {
 
         // 7.012
         "012" : { "use" : "FB",
-            "name" : "DPT_UEICurrentmA",
+            "name" : "DPT_UElCurrentmA",
             "desc" : "bus power supply current (mA)",
             "unit" : "mA"
         },

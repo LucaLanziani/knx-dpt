@@ -10,13 +10,13 @@ module.exports = {
     subs: {
         // 6.001 percentage (-128%..127%)
         "001" : {
-            "name" : "DPT_Switch", "desc" : "percent",
+            "name" : "DPT_Percent_V8", "desc" : "percent",
             "unit" : "%",
         },
 
-        // 6.002 counter pulses (-128..127)
-        "002" : {
-            "name" : "DPT_Bool", "desc" : "counter pulses",
+        // 6.010 counter pulses (-128..127)
+        "010" : {
+            "name" : "DPT_Value_1_Count", "desc" : "counter pulses",
             "unit" : "pulses"
         },
 

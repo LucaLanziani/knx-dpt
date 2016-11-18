@@ -24,14 +24,14 @@ module.exports = {
 
         // 8.003 time lag (10ms)
         "003": {
-            "name": "DPT_DeltaTime10Msec",
+            "name": "DPT_DeltaTime10MSec",
             "desc": "time lag(10ms)",
             "unit": "centiseconds"
         },
 
         // 8.004 time lag (100ms)
         "004": {
-            "name": "DPT_DeltaTime100Msec",
+            "name": "DPT_DeltaTime100MSec",
             "desc": "time lag(100ms)",
             "unit": "deciseconds"
         },
@@ -66,7 +66,7 @@ module.exports = {
 
         // 8.011 rotation angle (deg)
         "011": {
-            "name": "DPT_RotationAngle",
+            "name": "DPT_Rotation_Angle",
             "desc": "angle(degrees)",
             "unit": "°"
         }

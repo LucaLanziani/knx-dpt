@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const bitwriter = require('./utils/bitwriter');
 const bufrev = require('./utils/buffer-reverse');
 const mergeObjects = require('./utils/merge-objects');
 
@@ -8,6 +7,11 @@ const mergeObjects = require('./utils/merge-objects');
  * A collection of all layouts that are loaded.
  */
 var layouts = {};
+
+/**
+ * A collection of all property types that are loaded.
+ */
+var proptypes = {};
 
 /**
  * A collection of all datapoints that are currently loaded.
@@ -20,6 +24,12 @@ var datapoints = {};
  * @type {string}
  */
 var layoutDir = `${__dirname}/layouts`;
+
+/**
+ * The folder that contains all property types.
+ * @type {string}
+ */
+var propDir = `${__dirname}/props`;
 
 /**
  * The object that represents the library of datapoints
@@ -40,7 +50,18 @@ var dptlib = {
             });
         } else {
             // Store the layout in the layouts object
-            layouts[dptLayout.id] = dptLayout;
+            layouts[layout.id] = layout;
+        }
+    },
+    loadPropType: function (proptype) {
+        // If proptype contains list of proptypes, load them separately
+        if (Array.isArray(proptype)) {
+            proptype.forEach(function (p) {
+                dptlib.loadPropType(p);
+            });
+        } else {
+            // Store the proptype in the proptypes object
+            proptypes[proptype.id] = proptype;
         }
     },
     /**
@@ -53,7 +74,7 @@ var dptlib = {
 
         // Parse the dpt id
         // If it is a raw number
-        if (isFinite(dptid)) {
+        if (typeof dptid === 'number' && isFinite(dptid)) {
             // we're passed in a raw number (9)
             baseId = dptid;
             // If it is a string
@@ -86,7 +107,7 @@ module.exports = new Proxy(dptlib, {
 
         // Check if string in format dpt*
         var m = name.match(/dpt(\d+)/);
-        if(m) {
+        if (m) {
             return dptlib.resolve(`DPT${m[1]}`);
         }
 
@@ -95,6 +116,22 @@ module.exports = new Proxy(dptlib, {
     }
 });
 
+/**
+ * Load all property type specifications into the proptypes object.
+ */
+var propDirEntries = fs.readdirSync(propDir);
+for (var i = 0; i < propDirEntries.length; i++) {
+    // Get individual filename
+    var filename = propDir + path.sep + propDirEntries[i];
+    // Only load the file if it is not a directory
+    if (!fs.lstatSync(filename).isDirectory()) {
+        // Load the property from the file
+        var prop = require(filename);
+
+        // Load the property into the library
+        dptlib.loadPropType(prop);
+    }
+}
 
 /**
  * Load all datapoint specifications into the layouts object.
@@ -127,36 +164,27 @@ var buildDPT = function (baseId, subId) {
     if (datapoints[name])
         return datapoints[name];
 
-    // Not cached, so build the datapoint
-    var r = {};
+    // Not cached, so build the datapoint, first we determine the layout
     var specs = layouts[baseId];
     var layout = subId === null ? specs.base : mergeObjects(specs.base, specs.subs[subId]);
+
+    // Then we build the base datapoint intformation
+    var r = {};
+    r.name = layout.name;
+    r.desc = layout.desc;
+    r.unit = layout.unit;
+    r.use = layout.use;
 
     // First, determine the buffer size
     var bitsize = 0;
     for (var k in layout.props) {
         if (layout.props.hasOwnProperty(k)) {
             var prop = layout.props[k];
-            switch (prop.type) {
-                case "uint":
-                    bitsize += prop.size;
-                    break;
-                case "int":
-                    bitsize += prop.size;
-                    break;
-                case "skip":
-                    bitsize += prop.size;
-                    break;
-                case "bool":
-                    bitsize++;
-                    break;
-                case "string":
-                    bitsize += prop.size * 8;
-                    break;
-                case "float":
-                    bitsize += prop.size;
-                    break;
+            if(prop.type === 'skip') {
+                bitsize += prop.size;
+                continue;
             }
+            bitsize += proptypes[prop.type].size(prop);
         }
     }
     var bytesize = Math.ceil(bitsize / 8);
@@ -166,6 +194,11 @@ var buildDPT = function (baseId, subId) {
         // Allocate buffer and needed counters
         var buffer = Buffer.alloc(bytesize);
         var bitsWritten = 0;
+
+        // Check beforeSerialize
+        if (layout.beforeSerialize && typeof layout.beforeSerialize === 'function') {
+            input = layout.beforeSerialize(input);
+        }
 
         // Write out all properties
         for (var pk in layout.props) {
@@ -221,23 +254,7 @@ var buildDPT = function (baseId, subId) {
                 }
 
                 // Write value to buffer
-                switch (pv.type) {
-                    case "bool":
-                        bitsWritten += bitwriter.writeBool(buffer, value, bitsWritten);
-                        break;
-                    case "uint":
-                        bitsWritten += bitwriter.writeUint(buffer, value, pv.size, bitsWritten);
-                        break;
-                    case "int":
-                        bitsWritten += bitwriter.writeInt(buffer, value, pv.size, bitsWritten);
-                        break;
-                    case "string":
-                        bitsWritten += bitwriter.writeString(buffer, value, pv.size, bitsWritten);
-                        break;
-                    case "float":
-                        bitsWritten += bitwriter.writeFloat(buffer, value, pv.size, bitsWritten);
-                        break;
-                }
+                bitsWritten += proptypes[pv.type].write(pv, buffer, value, bitsWritten);
             }
         }
 
@@ -277,34 +294,9 @@ var buildDPT = function (baseId, subId) {
                 }
 
                 // Read value from buffer
-                var value = 0;
-                switch (pv.type) {
-                    case "bool":
-                        var readOut = bitwriter.readBool(buffer, bitsRead);
-                        value = readOut.value;
-                        bitsRead += readOut.bitsRead;
-                        break;
-                    case "uint":
-                        var readOut = bitwriter.readUint(buffer, pv.size, bitsRead);
-                        value = readOut.value;
-                        bitsRead += readOut.bitsRead;
-                        break;
-                    case "int":
-                        var readOut = bitwriter.readInt(buffer, pv.size, bitsRead);
-                        value = readOut.value;
-                        bitsRead += readOut.bitsRead;
-                        break;
-                    case "string":
-                        var readOut = bitwriter.readString(buffer, pv.size, bitsRead);
-                        value = readOut.value;
-                        bitsRead += readOut.bitsRead;
-                        break;
-                    case "float":
-                        var readOut = bitwriter.readFloat(buffer, pv.size, bitsRead);
-                        value = readOut.value;
-                        bitsRead += readOut.bitsRead;
-                        break;
-                }
+                var readOut = proptypes[pv.type].read(pv, buffer, bitsRead);
+                bitsRead += readOut.bitsRead;
+                var value = readOut.value;
 
                 // Map if necessary
                 if (pv.range && pv.mapRangeTo) {
@@ -346,6 +338,11 @@ var buildDPT = function (baseId, subId) {
                     }
                 }
             }
+        }
+
+        // Run after deserialization code
+        if (layout.afterDeserialize && typeof layout.afterDeserialize === 'function') {
+            result = layout.afterDeserialize(result);
         }
 
         // Return the result

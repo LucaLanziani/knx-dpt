@@ -155,7 +155,7 @@ module.exports = {
         //  1.019 open window or door
         "019": {
             use: "G",
-            name: "DPT_WindowDoor",
+            name: "DPT_Window_Door",
             desc: "open window/door",
             enc: {0: "closed", 1: "open"}
         },

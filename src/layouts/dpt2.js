@@ -26,7 +26,7 @@ module.exports = {
         // 2.003 enable control
         "003": {
             use: "FB",
-            name: "DPT_Emable_Control",
+            name: "DPT_Enable_Control",
             desc: "enable with priority",
             enc: {0: "Disabled", 1: "Enabled"}
         },
@@ -80,7 +80,7 @@ module.exports = {
         },
 
         // 2.010 start control
-        "001": {
+        "010": {
             use: "FB",
             name: "DPT_Start_Control",
             desc: "start with priority",
@@ -88,17 +88,17 @@ module.exports = {
         },
 
         // 2.011 state control
-        "001": {
+        "011": {
             use: "FB",
-            name: "DPT_Switch_Control",
+            name: "DPT_State_Control",
             desc: "switch",
             enc: {0: "No control", 1: "No control", 2: "Off", 3: "On"}
         },
 
         // 2.012 invert control
-        "001": {
+        "012": {
             use: "FB",
-            name: "DPT_Switch_Control",
+            name: "DPT_Invert_Control",
             desc: "switch",
             enc: {0: "No control", 1: "No control", 2: "Off", 3: "On"}
         }

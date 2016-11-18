@@ -1,4 +1,10 @@
 # KNX Datapoint library
+[![npm version](https://badge.fury.io/js/knx-dpt.svg)](https://badge.fury.io/js/knx-dpt)
+[![Build Status](https://travis-ci.org/rubenoost/knx-dpt.svg?branch=master)](https://travis-ci.org/rubenoost/knx-dpt)
+[![Build Status](https://travis-ci.org/rubenoost/knx-dpt.svg?branch=development)](https://travis-ci.org/rubenoost/knx-dpt)
+
+## Supported datatypes
+For a full overview of supported datapoints, see [here](doc/supported-datapoints.md)
 
 ## Installation
 
