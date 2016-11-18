@@ -1,3 +1,8 @@
+## upcoming
+
+- Add tests
+- Fix a broken `package.json`
+
 ## 0.0.2 (18 nov 2016)
 
 - Now supports datapoints `DPT1` to `DPT19`.

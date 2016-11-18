@@ -1,8 +1,6 @@
 const test = require('tape');
 const DPTLib = require('../../../src');
 
-var dpt = DPTLib.resolve('DPT17.001');
-
 var tests = [
     [[0x00], 0],
     [[0x01], 1],
@@ -70,7 +68,27 @@ var tests = [
     [[0x3F], 63]
 ];
 
+test('DPT17', function (t) {
+    var dpt = DPTLib.resolve('DPT17');
+    t.plan(tests.length * 2);
+    for (var i = 0; i < tests.length; i++) {
+        var buf = new Buffer(tests[i][0]);
+        var obj = tests[i][1];
+
+        // backward test (object to raw data)
+        converted = dpt.formatAPDU(obj);
+        t.deepEqual(converted, buf, `DPT17 formatAPDU ${JSON.stringify(obj)}`);
+
+        // forward test (raw data to object)
+        var converted = dpt.fromBuffer(buf);
+        t.deepEqual(converted, obj, `DPT17 fromBuffer ${JSON.stringify(buf)}`
+        );
+    }
+    t.end();
+});
+
 test('DPT17.001', function (t) {
+    var dpt = DPTLib.resolve('DPT17.001');
     t.plan(tests.length * 2);
     for (var i = 0; i < tests.length; i++) {
         var buf = new Buffer(tests[i][0]);

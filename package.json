@@ -1,8 +1,8 @@
 {
   "name": "knx-dpt",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Serialize and deserialize KNX datapoints",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "tape 'test/**/test*.js' | faucet"
   },
