@@ -1,0 +1,27 @@
+{
+  "name": "knx-dpt",
+  "version": "0.0.1",
+  "description": "Serialize and deserialize KNX datapoints",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape tests/**/test*.js | faucet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rubenoost/knx-dpt.git"
+  },
+  "keywords": [
+    "knx",
+    "dpt"
+  ],
+  "author": "Ruben Oost",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rubenoost/knx-dpt/issues"
+  },
+  "homepage": "https://github.com/rubenoost/knx-dpt#readme",
+  "devDependencies": {
+    "faucet": "0.0.1",
+    "tape": "^4.6.2"
+  }
+}
