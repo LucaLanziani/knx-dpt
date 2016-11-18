@@ -67,41 +67,26 @@ var tests = [
     [[0x3E], 62],
     [[0x3F], 63]
 ];
+var defaultTypes = ["DPT17", "DPT17.001"];
 
-test('DPT17', function (t) {
-    var dpt = DPTLib.resolve('DPT17');
-    t.plan(tests.length * 2);
-    for (var i = 0; i < tests.length; i++) {
-        var buf = new Buffer(tests[i][0]);
-        var obj = tests[i][1];
+for (var type in defaultTypes) {
+    var dptName = defaultTypes[type];
+    test(dptName, function (t) {
+        var dpt = DPTLib.resolve(dptName);
+        t.plan(tests.length * 2);
+        for (var i = 0; i < tests.length; i++) {
+            var buf = new Buffer(tests[i][0]);
+            var obj = tests[i][1];
 
-        // backward test (object to raw data)
-        converted = dpt.formatAPDU(obj);
-        t.deepEqual(converted, buf, `DPT17 formatAPDU ${JSON.stringify(obj)}`);
+            // backward test (object to raw data)
+            converted = dpt.formatAPDU(obj);
+            t.deepEqual(converted, buf, `${dptName} formatAPDU ${JSON.stringify(obj)}`);
 
-        // forward test (raw data to object)
-        var converted = dpt.fromBuffer(buf);
-        t.deepEqual(converted, obj, `DPT17 fromBuffer ${JSON.stringify(buf)}`
-        );
-    }
-    t.end();
-});
-
-test('DPT17.001', function (t) {
-    var dpt = DPTLib.resolve('DPT17.001');
-    t.plan(tests.length * 2);
-    for (var i = 0; i < tests.length; i++) {
-        var buf = new Buffer(tests[i][0]);
-        var obj = tests[i][1];
-
-        // backward test (object to raw data)
-        converted = dpt.formatAPDU(obj);
-        t.deepEqual(converted, buf, `DPT17.001 formatAPDU ${JSON.stringify(obj)}`);
-
-        // forward test (raw data to object)
-        var converted = dpt.fromBuffer(buf);
-        t.deepEqual(converted, obj, `DPT17.001 fromBuffer ${JSON.stringify(buf)}`
-        );
-    }
-    t.end();
-});
+            // forward test (raw data to object)
+            var converted = dpt.fromBuffer(buf);
+            t.deepEqual(converted, obj, `${dptName} fromBuffer ${JSON.stringify(buf)}`
+            );
+        }
+        t.end();
+    });
+}

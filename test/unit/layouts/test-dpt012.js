@@ -20,39 +20,25 @@ var tests = [
     [[0x01,0x01,0x01,0x00],16843008],
     [[0x01,0x01,0x01,0x01],16843009],
 ];
+var defaultTypes = ["DPT12", "DPT12.001"];
 
-test('DPT12', function (t) {
-    var dpt = DPTLib.resolve('DPT12');
-    t.plan(tests.length * 2);
-    for (var i = 0; i < tests.length; i++) {
-        var buf = new Buffer(tests[i][0]);
-        var obj = tests[i][1];
+for(var type in defaultTypes) {
+    var dptName = defaultTypes[type];
+    test(dptName, function (t) {
+        var dpt = DPTLib.resolve(dptName);
+        t.plan(tests.length * 2);
+        for (var i = 0; i < tests.length; i++) {
+            var buf = new Buffer(tests[i][0]);
+            var obj = tests[i][1];
 
-        // backward test (object to raw data)
-        var converted = dpt.formatAPDU(obj);
-        t.deepEqual(converted, buf, `DPT12 formatAPDU ${JSON.stringify(obj)}`);
+            // backward test (object to raw data)
+            var converted = dpt.formatAPDU(obj);
+            t.deepEqual(converted, buf, `${dptName} formatAPDU ${JSON.stringify(obj)}`);
 
-        // forward test (raw data to object)
-        converted = dpt.fromBuffer(Buffer.from(buf));
-        t.equal(converted, obj, `DPT12 fromBuffer ${JSON.stringify(buf)}`);
-    }
-    t.end();
-});
-
-test('DPT12.001', function (t) {
-    var dpt = DPTLib.resolve('DPT12.001');
-    t.plan(tests.length * 2);
-    for (var i = 0; i < tests.length; i++) {
-        var buf = new Buffer(tests[i][0]);
-        var obj = tests[i][1];
-
-        // backward test (object to raw data)
-        var converted = dpt.formatAPDU(obj);
-        t.deepEqual(converted, buf, `DPT12.001 formatAPDU ${JSON.stringify(obj)}`);
-
-        // forward test (raw data to object)
-        converted = dpt.fromBuffer(Buffer.from(buf));
-        t.equal(converted, obj, `DPT12.001 fromBuffer ${JSON.stringify(buf)}`);
-    }
-    t.end();
-});
+            // forward test (raw data to object)
+            converted = dpt.fromBuffer(Buffer.from(buf));
+            t.equal(converted, obj, `${dptName} fromBuffer ${JSON.stringify(buf)}`);
+        }
+        t.end();
+    });
+}

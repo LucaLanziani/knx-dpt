@@ -7,39 +7,25 @@ var tests = [
     [[0x34, 0x22, 0x75, 0xB0], {encryption: 1, readDirection: 1, permission: 0, error: 1, digit1:5 , digit2:7 , digit3:2 , digit4:2 , digit5:4 ,digit6: 3}],
     [[0x47, 0x61, 0x55, 0xC0], {encryption: 0, readDirection: 0, permission: 1, error: 1, digit1:5 , digit2:5 , digit3:1 , digit4:6 , digit5:7 ,digit6: 4}]
 ];
+var defaultTypes = ["DPT15", "DPT15.000"];
 
-test('DPT15', function (t) {
-    var dpt = DPTLib.resolve('DPT15');
-    t.plan(tests.length * 2);
-    for (var i = 0; i < tests.length; i++) {
-        var buf = new Buffer(tests[i][0]);
-        var obj = tests[i][1];
+for (var type in defaultTypes) {
+    var dptName = defaultTypes[type];
+    test(dptName, function (t) {
+        var dpt = DPTLib.resolve(dptName);
+        t.plan(tests.length * 2);
+        for (var i = 0; i < tests.length; i++) {
+            var buf = new Buffer(tests[i][0]);
+            var obj = tests[i][1];
 
-        // backward test (object to raw data)
-        converted = dpt.formatAPDU(obj);
-        t.deepEqual(converted, buf, `DPT15 formatAPDU ${JSON.stringify(obj)}`);
+            // backward test (object to raw data)
+            converted = dpt.formatAPDU(obj);
+            t.deepEqual(converted, buf, `${dptName} formatAPDU ${JSON.stringify(obj)}`);
 
-        // forward test (raw data to object)
-        var converted = dpt.fromBuffer(buf);
-        t.deepEqual(converted, obj, `DPT15 fromBuffer ${JSON.stringify(buf)}`);
-    }
-    t.end();
-});
-
-test('DPT15.000', function (t) {
-    var dpt = DPTLib.resolve('DPT15.000');
-    t.plan(tests.length * 2);
-    for (var i = 0; i < tests.length; i++) {
-        var buf = new Buffer(tests[i][0]);
-        var obj = tests[i][1];
-
-        // backward test (object to raw data)
-        converted = dpt.formatAPDU(obj);
-        t.deepEqual(converted, buf, `DPT15.000 formatAPDU ${JSON.stringify(obj)}`);
-
-        // forward test (raw data to object)
-        var converted = dpt.fromBuffer(buf);
-        t.deepEqual(converted, obj, `DPT15.000 fromBuffer ${JSON.stringify(buf)}`);
-    }
-    t.end();
-});
+            // forward test (raw data to object)
+            var converted = dpt.fromBuffer(buf);
+            t.deepEqual(converted, obj, `${dptName} fromBuffer ${JSON.stringify(buf)}`);
+        }
+        t.end();
+    });
+}
