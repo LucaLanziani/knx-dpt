@@ -1,8 +1,6 @@
 const test = require('tape');
 const DPTLib = require('../../../src');
 
-var dpt = DPTLib.resolve('DPT7');
-
 var tests = [
     // MSB LSB
     [[0x00, 0x00], 0],
@@ -25,20 +23,28 @@ var tests = [
     [[0xFF, 0xFE], 65534],
     [[0xFF, 0xFF], 65535]
 ];
+var defaultTypes = [
+    "DPT7", "DPT7.001", "DPT7.002", "DPT7.003", "DPT7.004", "DPT7.005", "DPT7.006", "DPT7.007", "DPT7.010", "DPT7.011",
+    "DPT7.012", "DPT7.013"
+];
 
-test('DPT7 conversion', function (t) {
-    t.plan(tests.length * 2);
-    for (var i = 0; i < tests.length; i++) {
-        var buf = new Buffer(tests[i][0]);
-        var obj = tests[i][1];
+for (var type in defaultTypes) {
+    var dptName = defaultTypes[type];
+    test(dptName, function (t) {
+        var dpt = DPTLib.resolve(dptName);
+        t.plan(tests.length * 2);
+        for (var i = 0; i < tests.length; i++) {
+            var buf = new Buffer(tests[i][0]);
+            var obj = tests[i][1];
 
-        // backward test (object to raw data)
-        var converted = dpt.formatAPDU(obj);
-        t.deepEqual(converted, buf, `DPT7 formatAPDU ${JSON.stringify(obj)}`);
+            // backward test (object to raw data)
+            var converted = dpt.formatAPDU(obj);
+            t.deepEqual(converted, buf, `${dptName} formatAPDU ${JSON.stringify(obj)}`);
 
-        // forward test (raw data to object)
-        converted = dpt.fromBuffer(Buffer.from(buf));
-        t.equal(converted, obj, `DPT7 fromBuffer ${JSON.stringify(buf)}`);
-    }
-    t.end();
-});
+            // forward test (raw data to object)
+            converted = dpt.fromBuffer(Buffer.from(buf));
+            t.equal(converted, obj, `${dptName} fromBuffer ${JSON.stringify(buf)}`);
+        }
+        t.end();
+    });
+}

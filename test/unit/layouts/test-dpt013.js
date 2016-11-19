@@ -1,8 +1,6 @@
 const test = require('tape');
 const DPTLib = require('../../../src');
 
-var dpt = DPTLib.resolve('DPT13');
-
 var tests = [
     [[0x00, 0x00, 0x00, 0x00], 0],
     [[0x00, 0x00, 0x00, 0x01], 1],
@@ -22,19 +20,28 @@ var tests = [
     [[0x80, 0x00, 0x00, 0x00], -2147483648],
 ];
 
-test('DPT13 conversion', function (t) {
-    t.plan(tests.length * 2);
-    for (var i = 0; i < tests.length; i++) {
-        var buf = new Buffer(tests[i][0]);
-        var obj = tests[i][1];
+var defaultTypes = [
+    "DPT13", "DPT13.001", "DPT13.002", "DPT13.010", "DPT13.011", "DPT13.012", "DPT13.013", "DPT13.014", "DPT13.015",
+    "DPT13.100"
+];
 
-        // backward test (object to raw data)
-        converted = dpt.formatAPDU(obj);
-        t.deepEqual(converted, buf, `DPT13 formatAPDU ${JSON.stringify(obj)}`);
+for (var type in defaultTypes) {
+    var dptName = defaultTypes[type];
+    test(dptName, function (t) {
+        var dpt = DPTLib.resolve(dptName);
+        t.plan(tests.length * 2);
+        for (var i = 0; i < tests.length; i++) {
+            var buf = new Buffer(tests[i][0]);
+            var obj = tests[i][1];
 
-        // forward test (raw data to object)
-        var converted = dpt.fromBuffer(buf);
-        t.equal(converted, obj, `DPT13 fromBuffer ${JSON.stringify(buf)}`);
-    }
-    t.end();
-});
+            // backward test (object to raw data)
+            converted = dpt.formatAPDU(obj);
+            t.deepEqual(converted, buf, `${dptName} formatAPDU ${JSON.stringify(obj)}`);
+
+            // forward test (raw data to object)
+            var converted = dpt.fromBuffer(buf);
+            t.equal(converted, obj, `${dptName} fromBuffer ${JSON.stringify(buf)}`);
+        }
+        t.end();
+    });
+}
