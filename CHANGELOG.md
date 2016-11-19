@@ -1,6 +1,6 @@
-## upcoming
+## 0.0.3 (19 nov 2016)
 
-- Add tests
+- Add more tests
 - Fix a broken `package.json`
 
 ## 0.0.2 (18 nov 2016)
